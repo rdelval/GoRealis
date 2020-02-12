@@ -2,6 +2,8 @@ module github.com/paypal/gorealis
 
 go 1.13
 
+replace github.com/apache/thrift => github.com/ridv/thrift v0.13.1
+
 require (
 	github.com/apache/thrift v0.13.0
 	github.com/davecgh/go-spew v1.1.0
