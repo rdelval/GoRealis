@@ -362,6 +362,33 @@ func TestRealisClient_CreateJob_ExecutorDoesNotExist(t *testing.T) {
 }
 
 // Test configuring an executor that doesn't exist for CreateJob API
+func TestRealisClient_CreateJob_Reserve_IP(t *testing.T) {
+	// Create a single job
+	job := realis.NewJob().
+		Environment("prod").
+		Role("vagrant").
+		Name("create_thermos_job_reserve_ip").
+		ExecutorName(aurora.AURORA_EXECUTOR_NAME).
+		ExecutorData(string(thermosPayload)).
+		CPU(.1).
+		RAM(16).
+		Disk(50).
+		IP(1).
+		InstanceCount(2)
+
+	_, err := r.CreateJob(job)
+	require.NoError(t, err)
+
+	// Test Instances Monitor
+	success, err := monitor.Instances(job.JobKey(), job.GetInstanceCount(), 1, 50)
+	assert.True(t, success)
+	assert.NoError(t, err)
+
+	_, err = r.KillJob(job.JobKey())
+	assert.NoError(t, err)
+}
+
+// Test configuring an executor that doesn't exist for CreateJob API
 func TestRealisClient_GetPendingReason(t *testing.T) {
 
 	env := "prod"
