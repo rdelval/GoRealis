@@ -4074,12 +4074,14 @@ func (p *Container) String() string {
 //  - DiskMb
 //  - NamedPort
 //  - NumGpus
+//  - IpAddr
 type Resource struct {
   NumCpus *float64 `thrift:"numCpus,1" db:"numCpus" json:"numCpus,omitempty"`
   RamMb *int64 `thrift:"ramMb,2" db:"ramMb" json:"ramMb,omitempty"`
   DiskMb *int64 `thrift:"diskMb,3" db:"diskMb" json:"diskMb,omitempty"`
   NamedPort *string `thrift:"namedPort,4" db:"namedPort" json:"namedPort,omitempty"`
   NumGpus *int64 `thrift:"numGpus,5" db:"numGpus" json:"numGpus,omitempty"`
+  IpAddr *int64 `thrift:"ipAddr,6" db:"ipAddr" json:"ipAddr,omitempty"`
 }
 
 func NewResource() *Resource {
@@ -4121,6 +4123,13 @@ func (p *Resource) GetNumGpus() int64 {
   }
 return *p.NumGpus
 }
+var Resource_IpAddr_DEFAULT int64
+func (p *Resource) GetIpAddr() int64 {
+  if !p.IsSetIpAddr() {
+    return Resource_IpAddr_DEFAULT
+  }
+return *p.IpAddr
+}
 func (p *Resource) CountSetFieldsResource() int {
   count := 0
   if (p.IsSetNumCpus()) {
@@ -4136,6 +4145,9 @@ func (p *Resource) CountSetFieldsResource() int {
     count++
   }
   if (p.IsSetNumGpus()) {
+    count++
+  }
+  if (p.IsSetIpAddr()) {
     count++
   }
   return count
@@ -4160,6 +4172,10 @@ func (p *Resource) IsSetNamedPort() bool {
 
 func (p *Resource) IsSetNumGpus() bool {
   return p.NumGpus != nil
+}
+
+func (p *Resource) IsSetIpAddr() bool {
+  return p.IpAddr != nil
 }
 
 func (p *Resource) Read(iprot thrift.TProtocol) error {
@@ -4218,6 +4234,16 @@ func (p *Resource) Read(iprot thrift.TProtocol) error {
     case 5:
       if fieldTypeId == thrift.I64 {
         if err := p.ReadField5(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    case 6:
+      if fieldTypeId == thrift.I64 {
+        if err := p.ReadField6(iprot); err != nil {
           return err
         }
       } else {
@@ -4285,6 +4311,15 @@ func (p *Resource)  ReadField5(iprot thrift.TProtocol) error {
   return nil
 }
 
+func (p *Resource)  ReadField6(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
+  return thrift.PrependError("error reading field 6: ", err)
+} else {
+  p.IpAddr = &v
+}
+  return nil
+}
+
 func (p *Resource) Write(oprot thrift.TProtocol) error {
   if c := p.CountSetFieldsResource(); c != 1 {
     return fmt.Errorf("%T write union: exactly one field must be set (%d set).", p, c)
@@ -4297,6 +4332,7 @@ func (p *Resource) Write(oprot thrift.TProtocol) error {
     if err := p.writeField3(oprot); err != nil { return err }
     if err := p.writeField4(oprot); err != nil { return err }
     if err := p.writeField5(oprot); err != nil { return err }
+    if err := p.writeField6(oprot); err != nil { return err }
   }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
@@ -4361,6 +4397,18 @@ func (p *Resource) writeField5(oprot thrift.TProtocol) (err error) {
     return thrift.PrependError(fmt.Sprintf("%T.numGpus (5) field write error: ", p), err) }
     if err := oprot.WriteFieldEnd(); err != nil {
       return thrift.PrependError(fmt.Sprintf("%T write field end error 5:numGpus: ", p), err) }
+  }
+  return err
+}
+
+func (p *Resource) writeField6(oprot thrift.TProtocol) (err error) {
+  if p.IsSetIpAddr() {
+    if err := oprot.WriteFieldBegin("ipAddr", thrift.I64, 6); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 6:ipAddr: ", p), err) }
+    if err := oprot.WriteI64(int64(*p.IpAddr)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.ipAddr (6) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 6:ipAddr: ", p), err) }
   }
   return err
 }

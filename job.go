@@ -34,6 +34,7 @@ type Job interface {
 	Disk(disk int64) Job
 	RAM(ram int64) Job
 	GPU(gpu int64) Job
+	IP(ip int64) Job
 	ExecutorName(name string) Job
 	ExecutorData(data string) Job
 	AddPorts(num int) Job
@@ -71,6 +72,7 @@ const (
 	RAM
 	DISK
 	GPU
+	IP
 )
 
 const portNamePrefix = "org.apache.aurora.port."
@@ -195,6 +197,20 @@ func (j *AuroraJob) GPU(gpu int64) Job {
 	}
 
 	j.resources[GPU].NumGpus = &gpu
+	return j
+}
+
+// IP sets the amount of IP addresses a task will reserve in an Aurora Job.
+func (j *AuroraJob) IP(ip int64) Job {
+	// For backwards compatibility, IP should only be set explicitly.
+	if _, ok := j.resources[IP]; !ok {
+		j.resources[IP] = &aurora.Resource{}
+		j.JobConfig().GetTaskConfig().Resources = append(
+			j.JobConfig().GetTaskConfig().Resources,
+			j.resources[IP])
+	}
+
+	j.resources[IP].IpAddr = &ip
 	return j
 }
 

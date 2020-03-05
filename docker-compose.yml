@@ -43,7 +43,7 @@ services:
       MESOS_CONTAINERIZERS: docker,mesos
       MESOS_PORT: 5051
       MESOS_HOSTNAME: localhost
-      MESOS_RESOURCES: ports(*):[11000-11999]
+      MESOS_RESOURCES: ports(*):[11000-11999];ips(*):10
       MESOS_SYSTEMD_ENABLE_SUPPORT: 'false'
       MESOS_WORK_DIR: /tmp/mesos
     networks:
@@ -68,7 +68,7 @@ services:
       MESOS_CONTAINERIZERS: docker,mesos
       MESOS_HOSTNAME: localhost
       MESOS_PORT: 5061
-      MESOS_RESOURCES: ports(*):[11000-11999]
+      MESOS_RESOURCES: ports(*):[11000-11999];ips(*):10
       MESOS_SYSTEMD_ENABLE_SUPPORT: 'false'
       MESOS_WORK_DIR: /tmp/mesos
     networks:

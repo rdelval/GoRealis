@@ -132,7 +132,8 @@ func main() {
 			Disk(100).
 			IsService(true).
 			InstanceCount(1).
-			AddPorts(1)
+			AddPorts(1).
+			IP(11)
 	case "compose":
 		job = realis.NewJob().
 			Environment("prod").
